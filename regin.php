@@ -44,7 +44,7 @@
 					<input name="_password" type="password" placeholder="" onkeypress="return PressToEnter(event)"/>
 					<div class = "sub-name">Повторите пароль:</div>
 					<input name="_passwordCopy" type="password" placeholder="" onkeypress="return PressToEnter(event)"/>
-					<center><div class="g-recaptcha" data-sitekey="*"></div></center>
+					<center><div class="g-recaptcha" data-sitekey="6LcCpFcsAAAAAMpPquJkT9Yi6PZdUN6vmXM0zy2R"></div></center>
 					
 					<a href="login.php">Вернуться</a>
 					<input type="button" class="button" value="Зайти" onclick="RegIn()" style="margin-top: 0px;"/>
@@ -68,50 +68,67 @@
 				var _password = document.getElementsByName("_password")[0].value;
 				var _passwordCopy = document.getElementsByName("_passwordCopy")[0].value;
 				
-				if(_login != "") {
-					if(_password != "") {
-						if(_password == _passwordCopy) {
-							loading.style.display = "block";
-							button.className = "button_diactive";
-							
-							var data = new FormData();
-							data.append("login", _login);
-							data.append("password", _password);
-							
-							// AJAX запрос
-							$.ajax({
-								url         : 'ajax/regin_user.php',
-								type        : 'POST', // важно!
-								data        : data,
-								cache       : false,
-								dataType    : 'html',
-								// отключаем обработку передаваемых данных, пусть передаются как есть
-								processData : false,
-								// отключаем установку заголовка типа запроса. Так jQuery скажет серверу что это строковой запрос
-								contentType : false, 
-								// функция успешного ответа сервера
-								success: function (_data) {
-									console.log("Авторизация прошла успешно, id: " +_data);
-									if(_data == -1) {
-										alert("Пользователь с таким логином существует.");
-										loading.style.display = "none";
-										button.className = "button";
-									} else {
-										location.reload();
-										loading.style.display = "none";
-										button.className = "button";
-									}
-								},
-								// функция ошибки
-								error: function( ){
-									console.log('Системная ошибка!');
-									loading.style.display = "none";
-									button.className = "button";
-								}
-							});
-						} else alert("Пароли не совподают.");
-					} else alert("Введите пароль.");
-				} else alert("Введите логин.");
+				if(_login == "") {
+					alert('Введите логин');
+					return;
+				}
+
+				if(_password == "") {
+					alert('Введите пароль');
+					return;
+				}
+
+				if(_password != _passwordCopy){
+					alert('пароли не совпадают');
+					return;
+				}
+
+				
+				loading.style.display = "block";
+				button.className = "button_diactive";
+				
+				var data = new FormData();
+				data.append("login", _login);
+				data.append("password", _password);
+				
+				var captcha = grecaptcha.getResponse();
+				if(captcha.length){
+					data.append('g-recaptcha-response', captcha);
+				}else{
+					alert("Необходимо пройти проверку");
+					return;
+				} 
+				// AJAX запрос
+				$.ajax({
+					url         : 'ajax/regin_user.php',
+					type        : 'POST', // важно!
+					data        : data,
+					cache       : false,
+					dataType    : 'html',
+					// отключаем обработку передаваемых данных, пусть передаются как есть
+					processData : false,
+					// отключаем установку заголовка типа запроса. Так jQuery скажет серверу что это строковой запрос
+					contentType : false, 
+					// функция успешного ответа сервера
+					success: function (_data) {
+						console.log("Авторизация прошла успешно, id: " +_data);
+						if(_data == -1) {
+							alert("Пользователь с таким логином существует.");
+							loading.style.display = "none";
+							button.className = "button";
+						} else {
+							location.reload();
+							loading.style.display = "none";
+							button.className = "button";
+						}
+					},
+					// функция ошибки
+					error: function( ){
+						console.log('Системная ошибка!');
+						loading.style.display = "none";
+						button.className = "button";
+					}
+				});
 			}
 			
 			function PressToEnter(e) {
