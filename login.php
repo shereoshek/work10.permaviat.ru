@@ -19,6 +19,7 @@
 		<title> Авторизация </title>
 		
 		<script src="https://code.jquery.com/jquery-1.8.3.js"></script>
+		<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
@@ -41,6 +42,7 @@
 					<input name="_login" type="text" placeholder="" onkeypress="return PressToEnter(event)"/>
 					<div class = "sub-name">Пароль:</div>
 					<input name="_password" type="password" placeholder="" onkeypress="return PressToEnter(event)"/>
+					<center><div class="g-recaptcha" data-sitekey="6LcCpFcsAAAAAMpPquJkT9Yi6PZdUN6vmXM0zy2R"></div></center>
 					
 					<a href="regin.php">Регистрация</a>
 					<br><a href="recovery.php">Забыли пароль?</a>
@@ -69,6 +71,14 @@
 				var data = new FormData();
 				data.append("login", _login);
 				data.append("password", _password);
+				
+				var captcha = grecaptcha.getResponse();
+				if(captcha.length){
+					data.append('g-recaptcha-response', captcha);
+				}else{
+					alert("Пройдите капчу");
+					return;
+				}
 				
 				// AJAX запрос
 				$.ajax({
