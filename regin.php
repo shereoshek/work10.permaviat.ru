@@ -44,7 +44,7 @@
 					<input name="_password" type="password" placeholder="" onkeypress="return PressToEnter(event)"/>
 					<div class = "sub-name">Повторите пароль:</div>
 					<input name="_passwordCopy" type="password" placeholder="" onkeypress="return PressToEnter(event)"/>
-					<center><div class="g-recaptcha" data-sitekey="6LcCpFcsAAAAAMpPquJkT9Yi6PZdUN6vmXM0zy2R"></div></center>
+					<center><div class="g-recaptcha" data-sitekey="6LcCpFcsAAAAAMpPquJkT9Yi6PZdUN6vmXM0zy2R"></div></center> <!-- шаг 5 -->
 					
 					<a href="login.php">Вернуться</a>
 					<input type="button" class="button" value="Зайти" onclick="RegIn()" style="margin-top: 0px;"/>
@@ -91,7 +91,7 @@
 				data.append("login", _login);
 				data.append("password", _password);
 				
-				var captcha = grecaptcha.getResponse();
+				var captcha = grecaptcha.getResponse(); //шаг 6
 				if(captcha.length){
 					data.append('g-recaptcha-response', captcha);
 				}else{
