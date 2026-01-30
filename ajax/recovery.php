@@ -1,9 +1,26 @@
 <?php
 	session_start();
 	include("../settings/connect_datebase.php");
+	require_once("../libs/recaptcha/autoload.php");
 	
 	$login = $_POST['login'];
 	
+	if(isset($_POST['g-recaptcha-response'])==false){
+		echo "Нет ответа капчи";
+		exit;
+	}
+
+	$Secret = "6LcCpFcsAAAAANSWcBl0tmDnSNk9KFOIxp-O6quw";
+	$Recatcha = new \ReCaptcha\ReCaptcha($Secret);
+	$Response = $Recatcha->verify($_POST["g-recaptcha-response"], $_SERVER['REMOTE_ADDR']);
+
+	if($Response->isSuccess()){
+		echo "Восстановление успешно";
+	}else{
+		echo "Проблема";
+		exit;
+	}
+
 	// ищем пользователя
 	$query_user = $mysqli->query("SELECT * FROM `users` WHERE `login`='".$login."';");
 	
